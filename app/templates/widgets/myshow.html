@@ -1,0 +1,49 @@
+{% extends "appbuilder/general/widgets/show.html" %}
+
+{% macro render_field(field) %}
+  <dt>{{ field.label }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+{% block columns %}
+	{% if fieldsets %}
+		<p></p>
+		<p><i>debug fieldset</i></p>
+			{% set var = namespace(watext="", waphone="", deposit=0, price=0, total=0, id=0) %}
+    		{% for fieldset_item in fieldsets %}
+        		{% for item in fieldset_item[1].get('fields') %}
+        			{% set var.watext = var.watext ~ label_columns.get(item) ~ ': ' ~ render_column(item) ~ '%0A' %}
+        			{% if label_columns.get(item) == "Id" %}
+        				{% set var.id = render_column(item) %}
+        			{% endif %}
+        			{% if label_columns.get(item) == "Phone" %}
+        				{% set var.waphone = render_column(item) %}
+        			{% endif %}
+        			{% if label_columns.get(item) == "Deposit" %}
+        				{% set var.deposit = render_column(item) | int %}
+        			{% endif %}
+        			{% if label_columns.get(item) == "Price" %}
+        				{% set var.price = render_column(item) | int %}
+        				{% set var.total = var.price - var.deposit %}
+        			{% endif %}
+        		{% endfor %}
+    		{% endfor %}
+    		{% set var.watext = var.watext ~ 'Total: ' ~ var.total ~ '%0ADetails: https://crane-climbing-awfully.ngrok-free.app/myapi/v1/greeting?q=(order:' ~ var.id ~ ')' %}
+    		<p><i>WA text: {{ var.watext }}</i></p>
+    		<p><i>WA phone: {{ var.waphone }}</i></p>
+    		<a href="https://wa.me/{{ var.waphone }}?text={{ var.watext }}">Share Order Info via WA</a>
+    		
+	{% else %}
+		<i>debug columns</i>
+	{% endif %}
+
+	{{ super() }}
+{% endblock %}

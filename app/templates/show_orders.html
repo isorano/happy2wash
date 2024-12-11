@@ -1,0 +1,6 @@
+{% extends "appbuilder/general/model/show.html" %}
+
+    {% block show_form %}
+        <a href="whatsapp://send?text='test 123'" data-action="share/whatsapp/share">Share Order Info via WA</a>
+        {{ super() }}
+    {% endblock %}
