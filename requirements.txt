@@ -1,0 +1,3 @@
+Flask
+Flask-AppBuilder
+Werkzeug>=2.3
